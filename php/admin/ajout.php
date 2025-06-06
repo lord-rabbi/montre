@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!is_dir($dir)) mkdir($dir, 0755, true);
         $dest = $dir . $newName;
         if (move_uploaded_file($_FILES['img']['tmp_name'], $dest)) {
-            $imgPath = $newName; // Juste le nom, sans "uploads/"
+            $imgPath = $newName; 
         }
     }
 

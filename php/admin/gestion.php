@@ -122,9 +122,10 @@ $produits = $req->fetchAll(PDO::FETCH_ASSOC);
     </table>
 
     <div style="text-align: center; margin-top: 2rem;">
-        <a href="index.php" class="link">← Retour au tableau de bord</a>
+        <a href="index.php" class="link">← Retour</a>
     </div>
 </div>
 
 </body>
 </html>
+
