@@ -1,13 +1,14 @@
 <?php
 session_start();
+require_once 'connection/connexion.php'; 
 
-// Redirection si déjà connecté
+
 if (isset($_SESSION['role'])) {
     if ($_SESSION['role'] === 'admin') {
-        header('Location: admin.php');
+        header('Location: php/admin/index.php');
         exit;
     } else {
-        header('Location: user.php');
+        header('Location: php/user/index.php');
         exit;
     }
 }
@@ -18,29 +19,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
 
-    $usersFile = __DIR__ . '/users.json';
-    $users = [];
+    if ($username && $password) {
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username");
+        $stmt->execute(['username' => $username]);
+        $user = $stmt->fetch();
 
-    if (file_exists($usersFile)) {
-        $users = json_decode(file_get_contents($usersFile), true);
-        if (!is_array($users)) {
-            $users = [];
-        }
-    }
+        if ($user && password_verify($password, $user['password'])) {
+            $_SESSION['username'] = $username;
+            $_SESSION['role'] = $user['role'];
 
-    if (isset($users[$username]) && password_verify($password, $users[$username]['password'])) {
-        $_SESSION['username'] = $username;
-        $_SESSION['role'] = $users[$username]['role'];
-
-        if ($_SESSION['role'] === 'admin') {
-            header('Location: admin.php');
+            if ($user['role'] === 'admin') {
+                header('Location: php/admin/index.php');
+            } else {
+                header('Location: php/user/index.php');
+            }
             exit;
         } else {
-            header('Location: user.php');
-            exit;
+            $error = "Nom d'utilisateur ou mot de passe incorrect.";
         }
     } else {
-        $error = "Nom d'utilisateur ou mot de passe incorrect.";
+        $error = "Veuillez remplir tous les champs.";
     }
 }
 ?>
@@ -48,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <title>Connexion</title>
     <link rel="stylesheet" href="style/style.css">
 </head>
@@ -67,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit">Se connecter</button>
     </form>
 
-    <p>Pas encore inscrit ? <a href="../compte.php" style="color:#ffd700;">Créez un compte ici</a></p>
+    <p>Pas encore inscrit ? <a href="php/compte.php" style="color:#ffd700;">Créez un compte ici</a></p>
 </div>
 
 </body>

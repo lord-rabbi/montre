@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit">S'inscrire</button>
     </form>
 
-    <p>Déjà inscrit ? <a href="#" style="color:#ffd700;">Connectez-vous ici</a></p>
+    <p>Déjà inscrit ? <a href="../index.php" style="color:#ffd700;">Connectez-vous ici</a></p>
 </div>
 
 </body>
