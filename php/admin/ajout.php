@@ -7,10 +7,13 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 
 include '../../connection/connexion.php';
 
+$categoriesDisponibles = ['','electronique', 'mode', 'livres', 'maison', 'consomable','autres'];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $n = $_POST['nom'] ?? '';
     $d = $_POST['description'] ?? '';
     $p = $_POST['prix'] ?? 0;
+    $c = $_POST['categorie'] ?? 'autres';
     $imgPath = null;
 
     if (!empty($_FILES['img']['name']) && $_FILES['img']['error'] === 0) {
@@ -24,8 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $stmt = $pdo->prepare("INSERT INTO produits (nom, description, prix, img) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$n, $d, $p, $imgPath]);
+    $stmt = $pdo->prepare("INSERT INTO produits (nom, description, prix, categorie, img) VALUES (?, ?, ?, ?, ?)");
+    $stmt->execute([$n, $d, $p, $c, $imgPath]);
 
     header('Location: gestion.php');
     exit;
@@ -48,6 +51,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="text" name="nom" placeholder="Nom" required>
         <textarea name="description" placeholder="Description" rows="4" required></textarea>
         <input type="number" step="0.01" name="prix" placeholder="Prix" required>
+
+        <label for="categorie">Catégorie :</label>
+        <select name="categorie" id="categorie" required>
+            <?php foreach ($categoriesDisponibles as $cat): ?>
+                <option value="<?= htmlspecialchars($cat) ?>"><?= ucfirst($cat) ?></option>
+            <?php endforeach; ?>
+        </select>
+
         <label for="img">Image (optionnelle)</label>
         <input type="file" name="img" id="img" accept="image/*">
 
